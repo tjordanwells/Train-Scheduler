@@ -17,28 +17,61 @@ $("#submit").on("click", function(event) {
     var firstTrainTime = $("#first-train-time").val().trim();
     var frequency = $("#frequency").val().trim();
 
+    var newTrain = {
+        name: trainName,
+        dest: destination,
+        time: firstTrainTime,
+        freq: frequency
+    };
+
+    database.ref().push(newTrain);
+
+    console.log(newTrain.name);
+    console.log(newTrain.dest);
+    console.log(newTrain.time);
+    console.log(newTrain.freq);
+
+
     $(".form-control").val("");
 
-    var tableRow = $("<tr>");
-    var tableName = $("<th scope='row'></th>");
-    var tableDestination = $("<td>");
-    var tableFrequency = $("<td>");
-    var tableNext = $("<td>");
-    var tableMinutes = $("<td>");
+});
 
-    $("#schedule").append(tableRow);
-    tableRow.append(tableName.text(trainName));
-    tableRow.append(tableDestination.text(destination));
-    tableRow.append(tableFrequency.text(frequency));
-    tableRow.append(tableNext);
-    tableRow.append(tableMinutes);
+database.ref().on("child_added", function(childSnapshot, prevChildKey) {
+    console.log(childSnapshot.val());
+
+    var trainName = childSnapshot.val().name;
+    var destination = childSnapshot.val().dest;
+    var firstTrainTime = childSnapshot.val().time;
+    var frequency = childSnapshot.val().freq;
 
     console.log(trainName);
     console.log(destination);
     console.log(firstTrainTime);
     console.log(frequency);
 
-})
+    var localTime = moment().local().format("HH:mm");
+    var firstTrainConverted = moment(firstTrainTime, "HH:mm").subtract(1, "years");
+    console.log(firstTrainConverted);
+    console.log(localTime);
+
+    var difference = moment().diff(moment(firstTrainConverted), "minutes");
+    console.log(difference);
+
+    var remainder = difference % frequency;
+    console.log(remainder);
+
+    var minutesAway = frequency - remainder;
+    console.log(minutesAway);
+
+    var nextArrival = moment().add(minutesAway, "minutes").format("HH:mm");
+    console.log(nextArrival);
+
+    $("#schedule").append("<tr><th scope='row'>" + trainName + "</th><td>" + destination + "</td><td>" + 
+    frequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td><tr>");
+
+
+
+});
 
 
 
