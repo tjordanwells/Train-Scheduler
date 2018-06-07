@@ -7,6 +7,14 @@ body {
     background-image: url("../images/brick_wall.jpeg");
 }
 
+.trainForm {
+    opacity: 1;
+}
+
+.displayForm {
+    opacity: inherit;
+}
+
 @media only screen and (max-width: 600px) {
     h1 {
         font-size: 3rem;
